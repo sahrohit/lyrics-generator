@@ -70,12 +70,9 @@ const LogsTable = ({ data }) => {
 		return (
 			<Tr>
 				<Th>Time</Th>
-				<Th>Query</Th>
+				<Th>Initiators</Th>
 				<Th>Response</Th>
-				<Th isNumeric>Confidence</Th>
-				<Th>Answered?</Th>
-				<Th>Probable Answer</Th>
-				<Th>City</Th>
+				<Th isNumeric>Requested Characters</Th>
 				<Th>Country</Th>
 			</Tr>
 		);
@@ -107,18 +104,9 @@ const LogsTable = ({ data }) => {
 											<Text>{formatTimestamp(item.timestamp)}</Text>
 										</Stack>
 									</Td>
-									<Td>{item.question}</Td>
-									<Td>{item.response}</Td>
-									<Td isNumeric>{item.probability.toFixed(4)}</Td>
-									<Td>
-										<Center>
-											<Tag colorScheme={item.isAnswered ? `green` : `red`}>
-												{item.isAnswered ? `Yes` : `No`}
-											</Tag>
-										</Center>
-									</Td>
-									<Td>{item?.probableAnswer}</Td>
-									<Td>{item.geoData.geoplugin_city}</Td>
+									<Td>{item.user_string}</Td>
+									<Td>{item.generated_lyrics}</Td>
+									<Td isNumeric>{item.user_characters}</Td>
 									<Td>
 										<Center>
 											<Tooltip
@@ -195,7 +183,7 @@ const LogsTable = ({ data }) => {
 							/>
 						</Tooltip>
 					</MotionBox>
-					<MotionBox
+					{/* <MotionBox
 						drag
 						dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
 						dragElastic={0.2}
@@ -251,7 +239,7 @@ const LogsTable = ({ data }) => {
 								href="/Report.pdf"
 							/>
 						</Tooltip>
-					</MotionBox>
+					</MotionBox> */}
 				</Stack>
 			</AnimatePresence>
 		</>

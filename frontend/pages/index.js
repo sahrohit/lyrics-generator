@@ -36,6 +36,7 @@ import { IoIosStats } from "react-icons/io";
 import { useRouter } from "next/router";
 import { BsFileEarmarkPdfFill } from "react-icons/bs";
 import { AiFillApi } from "react-icons/ai";
+import { MdGraphicEq } from "react-icons/md";
 
 const Home = () => {
 	const inputRef = useRef();
@@ -47,6 +48,7 @@ const Home = () => {
 	const [loading, setLoading] = useState(false);
 
 	const [sliderValue, setSliderValue] = useState(400);
+	const [showTooltip, setShowTooltip] = useState(false);
 
 	const [messageAcknowledged, setMessageAcknowledged] = useState(false);
 
@@ -73,7 +75,11 @@ const Home = () => {
 	const validateMessage = (value) => {
 		let error;
 		if (!value) {
-			error = "Message is required";
+			error = "Initiator is required";
+		} else if (value.length <= 15) {
+			error = "Be Creative, Add more words!";
+		} else if (value.length > 60) {
+			error = "Don't be greedy, keep it under 60 characters";
 		}
 		return error;
 	};
@@ -97,8 +103,9 @@ const Home = () => {
 					textAlign="center"
 					alignItems="center"
 					width="80%"
+					flexWrap={{ base: "wrap", lg: "nowrap" }}
 				>
-					<Box w={1/3}>
+					<Box w={{ base: "full", lg: 1 / 3 }}>
 						<Box>
 							<Heading as="h1" size="2xl">
 								Lyrics Generator
@@ -143,20 +150,20 @@ const Home = () => {
 														}
 													>
 														<FormLabel id="field-message-label" htmlFor="text">
-															Message
+															Initiators
 														</FormLabel>
 														<InputGroup>
 															<Input
 																{...field}
 																id="text"
-																placeholder="Message"
+																placeholder="Type your inner feelings."
 																ref={inputRef}
 																width={{ base: "100%", lg: 400, xl: 400 }}
 															/>
 															<InputRightElement width="4.5rem">
 																<Tooltip
 																	offset={[10, 10]}
-																	label="Try Random Question"
+																	label="Try Random Initiators"
 																	placement="top"
 																	openDelay={1000}
 																>
@@ -189,6 +196,9 @@ const Home = () => {
 															form.errors.characters && form.touched.characters
 														}
 													>
+														<FormLabel id="field-message-label" htmlFor="text">
+															Number of Characters
+														</FormLabel>
 														<InputGroup>
 															<Slider
 																aria-label="slider-ex-1"
@@ -198,11 +208,48 @@ const Home = () => {
 																onChange={(val) => {
 																	setSliderValue(val);
 																}}
+																onMouseEnter={() => setShowTooltip(true)}
+																onMouseLeave={() => setShowTooltip(false)}
 															>
+																<SliderMark
+																	value={100}
+																	mt="1"
+																	ml="-2.5"
+																	fontSize="sm"
+																>
+																	100
+																</SliderMark>
+																<SliderMark
+																	value={500}
+																	mt="1"
+																	ml="-2.5"
+																	fontSize="sm"
+																>
+																	500
+																</SliderMark>
+																<SliderMark
+																	value={1000}
+																	mt="1"
+																	ml="-2.5"
+																	fontSize="sm"
+																>
+																	1000
+																</SliderMark>
 																<SliderTrack>
 																	<SliderFilledTrack />
 																</SliderTrack>
-																<SliderThumb />
+																<Tooltip
+																	hasArrow
+																	bg="teal.500"
+																	color="white"
+																	placement="top"
+																	isOpen={showTooltip}
+																	label={`${sliderValue}`}
+																>
+																	<SliderThumb boxSize={6}>
+																		<Box color="blue" as={MdGraphicEq} />
+																	</SliderThumb>
+																</Tooltip>
 															</Slider>
 															{/* <Input
 														{...field}
@@ -219,13 +266,12 @@ const Home = () => {
 												)}
 											</Field>
 											<Button
-												mt={4}
 												colorScheme="teal"
 												isLoading={props.isSubmitting || loading}
 												disabled={props.isSubmitting}
 												type="submit"
 											>
-												Submit
+												Generate Lyrics
 											</Button>
 										</Stack>
 									</Form>
@@ -234,14 +280,15 @@ const Home = () => {
 						</Box>
 					</Box>
 
-					<Box mx={10} w={2/3}>
+					<Box mx={10} w={{ base: "full", lg: 2 / 3 }}>
 						<Text
 							fontSize="xl"
 							textOverflow="wrap"
 							style={{ opacity: response ? 100 : 0 }}
-						>
-							{response}
-						</Text>
+							dangerouslySetInnerHTML={{
+								__html: response?.replaceAll("\n", "<br />"),
+							}}
+						/>
 					</Box>
 				</Flex>
 			</Flex>
@@ -271,7 +318,7 @@ const Home = () => {
 					</Tooltip>
 				</MotionBox>
 			</AnimatePresence>
-			{/* <AnimatePresence exitBeforeEnter={true} onExitComplete={() => null}>
+			<AnimatePresence exitBeforeEnter={true} onExitComplete={() => null}>
 				<Stack
 					direction="row"
 					position="fixed"
@@ -297,65 +344,8 @@ const Home = () => {
 							/>
 						</Tooltip>
 					</MotionBox>
-					<MotionBox
-						drag
-						dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-						dragElastic={0.2}
-						dragTransition={{ bounceStiffness: 1000, bounceDamping: 10 }}
-					>
-						<Tooltip label="Stats" closeOnClick={false} placement="top">
-							<IconButton
-								fontSize="2xl"
-								variant="nooutline"
-								colorScheme="teal"
-								aria-label="Toggle Light Mode"
-								icon={<IoIosStats />}
-								onClick={() => {
-									router.push("/stats");
-								}}
-							/>
-						</Tooltip>
-					</MotionBox>
-					<MotionBox
-						drag
-						dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-						dragElastic={0.2}
-						dragTransition={{ bounceStiffness: 1000, bounceDamping: 10 }}
-					>
-						<Tooltip label="API" closeOnClick={false} placement="top">
-							<IconButton
-								as="a"
-								cursor="pointer"
-								fontSize="2xl"
-								variant="nooutline"
-								colorScheme="teal"
-								aria-label="Toggle Light Mode"
-								icon={<AiFillApi />}
-								href="/api/logs"
-							/>
-						</Tooltip>
-					</MotionBox>
-					<MotionBox
-						drag
-						dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-						dragElastic={0.2}
-						dragTransition={{ bounceStiffness: 1000, bounceDamping: 10 }}
-					>
-						<Tooltip label="Report" closeOnClick={false} placement="top">
-							<IconButton
-								as="a"
-								cursor="pointer"
-								fontSize="2xl"
-								variant="nooutline"
-								colorScheme="teal"
-								aria-label="Toggle Light Mode"
-								icon={<BsFileEarmarkPdfFill />}
-								href="/Report.pdf"
-							/>
-						</Tooltip>
-					</MotionBox>
 				</Stack>
-			</AnimatePresence> */}
+			</AnimatePresence>
 			<FloatingIcon
 				icon={<FaGithub />}
 				position="fixed"

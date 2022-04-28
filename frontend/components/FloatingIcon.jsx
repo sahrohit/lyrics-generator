@@ -32,11 +32,12 @@ const FloatingIcon = ({ icon, onClick, ...rest }) => {
 				initial="initial"
 				animate={["hidden", "bounce"]}
 				variants={scrollMoreVariants}
+				positon="fixed"
 			>
 				<Link
 					aria-label="Github"
 					rel="noreferrer"
-					href="https://github.com/sahrohit/ml-chatbot"
+					href="https://github.com/sahrohit/lyrics-generator"
 					target="_blank"
 				>
 					<Tooltip
